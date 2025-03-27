@@ -6,8 +6,8 @@ import { Carousel, CarouselApi, CarouselContent, CarouselItem } from '@/componen
 import { Editor } from '@/features/family-tree/components/editor';
 import { FamilyTree } from '@/features/family-tree/components/family-tree';
 import { FamilyNode, RawFamilyMember } from '@/features/family-tree/data/family';
-import { FamilyNodeFactory } from '@/features/family-tree/data/family-node-factory';
-import { FamilyTreeData } from '@/features/family-tree/data/family-tree-data';
+import { FamilyNodeFactory } from '@/features/family-tree/patterns/family-node-factory';
+import { FamilyTreeData } from '@/features/family-tree/patterns/family-tree-data';
 import { flattenMapNode } from '@/utils/flatten-map-node';
 import { OrgChart } from 'd3-org-chart';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
