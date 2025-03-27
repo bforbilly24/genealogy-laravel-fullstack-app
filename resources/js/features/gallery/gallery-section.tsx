@@ -4,12 +4,11 @@ import { GetGallery } from '@/actions/get-gallery';
 import MaxWidthWrapper from '@/components/global/max-width-wrapper';
 import { Section } from '@/components/global/section';
 import { Loader } from '@/components/loader/loader';
-import { FocusCards } from '@/components/ui/aceternity/focus-cards';
-import { CardType } from '@/types/api';
+import { GalleryFocusCards } from '@/features/gallery/components/gallery-focus-cards';
+import { galleryManager } from '@/features/gallery/patterns/gallery-manager';
 import { useEffect, useState } from 'react';
 
 const GallerySection = () => {
-    const [cards, setCards] = useState<CardType[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -17,13 +16,17 @@ const GallerySection = () => {
         const loadGallery = async () => {
             setLoading(true);
             const { cards: fetchedCards, error: fetchError } = await GetGallery();
-            setCards(fetchedCards);
+            if (!fetchError) {
+                galleryManager.setCards(fetchedCards);
+            }
             setError(fetchError);
             setLoading(false);
         };
 
         loadGallery();
     }, []);
+
+    const cards = galleryManager.getCards(); // Ambil dari singleton
 
     if (loading) {
         return (
@@ -61,7 +64,7 @@ const GallerySection = () => {
                                 Berikut adalah dokumentasi Keluarga Bani Mufadhillah dari awal hingga era modern.
                             </p>
                         </div>
-                        <FocusCards cards={cards} />
+                        <GalleryFocusCards cards={cards} />
                     </div>
                 </MaxWidthWrapper>
             </div>
