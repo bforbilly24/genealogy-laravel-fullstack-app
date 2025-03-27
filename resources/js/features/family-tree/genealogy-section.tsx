@@ -6,6 +6,8 @@ import { Carousel, CarouselApi, CarouselContent, CarouselItem } from '@/componen
 import { Editor } from '@/features/family-tree/components/editor';
 import { FamilyTree } from '@/features/family-tree/components/family-tree';
 import { FamilyNode, RawFamilyMember } from '@/features/family-tree/data/family';
+import { FamilyNodeFactory } from '@/features/family-tree/data/family-node-factory';
+import { FamilyTreeData } from '@/features/family-tree/data/family-tree-data';
 import { flattenMapNode } from '@/utils/flatten-map-node';
 import { OrgChart } from 'd3-org-chart';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -29,30 +31,16 @@ const EmptyState = () => {
     );
 };
 
-const convertToFamilyNode = (data: RawFamilyMember): FamilyNode => {
-    return {
-        id: data.id.toString(),
-        parentId: data.parent_id?.toString(),
-        name: data.name,
-        spouse: data.spouse || undefined,
-        address: data.address || undefined,
-        birthPlace: data.birth_place || undefined,
-        gender: data.gender,
-        birthDate: data.birth_date || undefined,
-        generation: data.generation,
-        label: data.label || undefined,
-        children: data.children ? data.children.map((child) => convertToFamilyNode(child)) : [],
-    };
-};
-
 function GenealogySection({ nodes }: Props) {
-    const [data, setData] = useState<FamilyNode[]>([]);
+    const familyTreeData = FamilyTreeData.getInstance();
+    const factory = useMemo(() => new FamilyNodeFactory(), []);
+    const [data, setData] = useState<FamilyNode[]>(familyTreeData.getNodes());
     const [editingNode, setEditingNode] = useState<FamilyNode | null>(null);
     const [openEditor, setOpenEditor] = useState(false);
     const [api, setApi] = useState<CarouselApi>();
     const chart = useRef(new OrgChart<FamilyNode>());
 
-    const listFamily = useMemo(() => nodes.map((node) => convertToFamilyNode(node)), [nodes]);
+    const listFamily = useMemo(() => nodes.map((node) => factory.createFromRaw(node)), [nodes, factory]);
 
     const familiesWithChildren = useMemo(
         () => [
@@ -69,14 +57,16 @@ function GenealogySection({ nodes }: Props) {
     const handleChooseFamily = useCallback(
         (node: FamilyNode) => {
             const nodesFiltered = node.id === 'all' ? listFamily : flattenMapNode({ node: { ...node, parentId: undefined } });
-            setData(nodesFiltered);
+            familyTreeData.setNodes(nodesFiltered);
+            setData(familyTreeData.getNodes());
         },
-        [listFamily],
+        [listFamily, familyTreeData],
     );
 
     useEffect(() => {
-        setData(listFamily);
-    }, [listFamily]);
+        familyTreeData.setNodes(listFamily);
+        setData(familyTreeData.getNodes());
+    }, [listFamily, familyTreeData]);
 
     useEffect(() => {
         if (!api) return;
@@ -102,11 +92,20 @@ function GenealogySection({ nodes }: Props) {
     };
 
     return (
-        <Section id={'history'} className="relative mx-auto flex flex-col bg-slate-50 dark:bg-transparent lg:py-32 md:py-16 py-8">
+        <Section id={'history'} className="relative mx-auto flex flex-col bg-slate-50 py-8 md:py-16 lg:py-32 dark:bg-transparent">
             <img src="/images/global/pattern-1.png" className="absolute inset-0 z-0 h-full w-full object-cover" />
 
             <div className="relative z-20 flex w-full items-center justify-center px-4">
-                <Editor setNodes={setData} nodes={data} editingNode={editingNode} openEditor={openEditor} setOpenEditor={setOpenEditor} />
+                <Editor
+                    setNodes={(nodes) => {
+                        familyTreeData.setNodes(nodes);
+                        setData(familyTreeData.getNodes());
+                    }}
+                    nodes={data}
+                    editingNode={editingNode}
+                    openEditor={openEditor}
+                    setOpenEditor={setOpenEditor}
+                />
                 <div className="flex flex-col items-center justify-center gap-y-2">
                     <h1 className="text-primary text-2xl font-medium tracking-[0.4rem] md:text-3xl md:tracking-[0.5rem] lg:text-4xl lg:tracking-[0.6rem]">
                         Silsilah Keluarga
