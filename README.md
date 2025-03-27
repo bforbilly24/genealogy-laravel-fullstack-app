@@ -1,4 +1,4 @@
-# STRUCTURE BANI MUFADHILLAH WEBSITE
+# STRUCTURE GENEALOGY
 
 ## Client Side Structure Overview
 ```
