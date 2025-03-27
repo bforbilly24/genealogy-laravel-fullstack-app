@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/shadcn/button';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/shadcn/carousel';
 import { FamilyNode } from '@/features/family-tree/data/family';
+import { FamilyTreeData } from '@/features/family-tree/data/family-tree-data';
 import { flattenMapNode } from '@/utils/flatten-map-node';
 import { useState } from 'react';
 
@@ -12,6 +13,7 @@ type Props = {
 };
 
 function Menu({ family, setData }: Props) {
+    const familyTreeData = FamilyTreeData.getInstance();
     const [activeFamily, setActiveFamily] = useState<FamilyNode | null>(null);
 
     const familiesWithChildren = [
@@ -26,7 +28,8 @@ function Menu({ family, setData }: Props) {
     const handleChooseFamily = (node: FamilyNode) => {
         setActiveFamily(node);
         const nodes = node.id === 'all' ? family : flattenMapNode({ node: { ...node, parentId: undefined } });
-        setData(nodes);
+        familyTreeData.setNodes(nodes);
+        setData(familyTreeData.getNodes());
     };
 
     return (
