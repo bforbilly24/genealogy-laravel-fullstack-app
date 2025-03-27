@@ -4,7 +4,7 @@ import { GetGallery } from '@/actions/get-gallery';
 import MaxWidthWrapper from '@/components/global/max-width-wrapper';
 import { Section } from '@/components/global/section';
 import { Loader } from '@/components/loader/loader';
-import { FocusCards } from '@/components/ui/aceternity/focus-cards';
+import { GalleryFocusCards } from '@/features/gallery/components/gallery-focus-cards';
 import { CardType } from '@/types/api';
 import { useEffect, useState } from 'react';
 
@@ -61,7 +61,7 @@ const GallerySection = () => {
                                 Berikut adalah dokumentasi Keluarga Bani Mufadhillah dari awal hingga era modern.
                             </p>
                         </div>
-                        <FocusCards cards={cards} />
+                        <GalleryFocusCards cards={cards} />
                     </div>
                 </MaxWidthWrapper>
             </div>
