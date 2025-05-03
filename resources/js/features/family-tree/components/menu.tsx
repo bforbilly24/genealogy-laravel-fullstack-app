@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/shadcn/button';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/shadcn/carousel';
 import { FamilyNode } from '@/features/family-tree/data/family';
-import { FamilyTreeData } from '@/features/family-tree/data/family-tree-data';
+import { FamilyTreeData } from '@/features/family-tree/patterns/family-tree-data';
 import { flattenMapNode } from '@/utils/flatten-map-node';
 import { useState } from 'react';
 

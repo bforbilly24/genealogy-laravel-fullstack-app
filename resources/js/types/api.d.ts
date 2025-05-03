@@ -3,6 +3,7 @@ type CardType = {
     title: string;
     src: string;
     description: string;
+    type: 'photo' | 'video' | 'default';
 };
 
 export { CardType };
